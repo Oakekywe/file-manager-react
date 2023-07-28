@@ -7,9 +7,12 @@ import "bootstrap/dist/js/bootstrap.bundle.js";
 
 import { Provider } from "react-redux";
 import stores from "./redux/stores.js";
+import { BrowserRouter } from "react-router-dom";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <Provider store={stores}>
-    <App />
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
   </Provider>
 );
