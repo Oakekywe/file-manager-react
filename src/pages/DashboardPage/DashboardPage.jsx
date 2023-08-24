@@ -1,8 +1,14 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import Navbar from "../../components/DashboardComponents/Navbar/Navbar";
+import SubBar from "../../components/DashboardComponents/SubBar/SubBar";
+import HomeComponent from "../../components/DashboardComponents/HomeComponent/HomeComponent";
+import { fas } from "@fortawesome/free-solid-svg-icons";
+import CreateFolder from "../../components/DashboardComponents/CreateFolder/CreateFolder";
 
 const DashboardPage = () => {
+  const [isCreateFolderModalOpen, setIsCreateFolderModalOpen] = useState(false);
   const navigate = useNavigate();
   const isLoggedIn = useSelector((state) => state.auth.isAuthenticated);
 
@@ -10,9 +16,21 @@ const DashboardPage = () => {
     if (!isLoggedIn) {
       navigate("/");
     }
-  });
+  }, []);
 
-  return <h1>Welcome to the Dashboard!</h1>;
+  return (
+    <>
+    {
+      isCreateFolderModalOpen && (
+        <CreateFolder 
+        setIsCreateFolderModalOpen={setIsCreateFolderModalOpen} />
+      )
+    }
+      <Navbar />
+      <SubBar setIsCreateFolderModalOpen={setIsCreateFolderModalOpen}/>
+      <HomeComponent />
+    </>
+  );
 };
 
 export default DashboardPage;
