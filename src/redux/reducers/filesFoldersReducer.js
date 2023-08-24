@@ -1,6 +1,6 @@
 import * as types from "../actionsTypes/fileFolderActionTypes";
 const initialState = {
-  isLoaded: false,
+  isLoading: true,
   currentFolder: "root",
   userFolders: [],
   userFiles: [],
@@ -14,6 +14,16 @@ const filesFoldersReducer = (state = initialState, action) => {
       return {
         ...state,
         userFolders: [...state.userFolders, action.payload],
+      };
+    case types.ADD_FOLDER:
+      return {
+        ...state,
+        userFolders: action.payload,
+      };
+    case types.SET_LOADING:
+      return {
+        ...state,
+        isLoading: action.payload,
       };
 
     default:
