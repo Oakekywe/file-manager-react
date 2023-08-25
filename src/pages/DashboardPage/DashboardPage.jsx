@@ -1,19 +1,26 @@
 import React, { useEffect, useState } from "react";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
-import { Route, Routes, useNavigate } from "react-router-dom";
+import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import Navbar from "../../components/DashboardComponents/Navbar/Navbar";
 import SubBar from "../../components/DashboardComponents/SubBar/SubBar";
 import HomeComponent from "../../components/DashboardComponents/HomeComponent/HomeComponent";
 import CreateFolder from "../../components/DashboardComponents/CreateFolder/CreateFolder";
-import { getFiles, getFolders } from "../../redux/actionCreators/fileFolderActionCreator";
+import {
+  getFiles,
+  getFolders,
+} from "../../redux/actionCreators/fileFolderActionCreator";
 import FolderComponent from "../../components/DashboardComponents/FolderComponent/FolderComponent";
 import CreateFile from "../../components/DashboardComponents/CreateFile/CreateFile";
+import FileComponent from "../../components/DashboardComponents/FileComponent/FileComponent";
 
 const DashboardPage = () => {
   const [isCreateFolderModalOpen, setIsCreateFolderModalOpen] = useState(false);
   const [isCreateFileModalOpen, setIsCreateFileModalOpen] = useState(false);
+  const [showSubBar, setShowSubBar] = useState(true);
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { pathname } = useLocation();
 
   const { isLoggedIn, isLoading, userId } = useSelector(
     (state) => ({
@@ -37,6 +44,12 @@ const DashboardPage = () => {
     }
   }, [isLoading, userId, dispatch]);
 
+  useEffect(() => {
+    if (pathname.includes("/file/")) {
+      setShowSubBar(false);
+    }
+  }, [pathname]);
+
   return (
     <>
       {isCreateFolderModalOpen && (
@@ -46,13 +59,17 @@ const DashboardPage = () => {
         <CreateFile setIsCreateFileModalOpen={setIsCreateFileModalOpen} />
       )}
       <Navbar />
-      <SubBar
-        setIsCreateFolderModalOpen={setIsCreateFolderModalOpen}
-        setIsCreateFileModalOpen={setIsCreateFileModalOpen}
-      />
+      {showSubBar && (
+        <SubBar
+          setIsCreateFolderModalOpen={setIsCreateFolderModalOpen}
+          setIsCreateFileModalOpen={setIsCreateFileModalOpen}
+        />
+      )}
+
       <Routes>
         <Route path="" element={<HomeComponent />} />
         <Route path="folder/:folderId" element={<FolderComponent />} />
+        <Route path="file/:fileId" element={<FileComponent />} />
       </Routes>
     </>
   );
