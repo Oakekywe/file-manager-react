@@ -1,6 +1,7 @@
 import fire from "../../config/firebase";
 import * as types from "../actionsTypes/fileFolderActionTypes";
 
+//folder
 const addFolder = (payload) => ({
   type: types.CREATE_FOLDER,
   payload,
@@ -21,9 +22,20 @@ const setChangeFolder = (payload) => ({
   payload,
 });
 
-//action creators
+//file
+const addFiles = (payload) => ({
+  type: types.ADD_FILES,
+  payload,
+});
 
-export const createFolder = (data) => (dispatch) => {
+const addFile = (payload) => ({
+  type: types.CREATE_FILE,
+  payload,
+});
+
+//action creators
+//folder
+export const createFolder = (data, setSuccess) => (dispatch) => {
   fire
     .firestore()
     .collection("folders")
@@ -33,6 +45,10 @@ export const createFolder = (data) => (dispatch) => {
       const folderId = folder.id;
       dispatch(addFolder({ data: folderData, docId: folderId }));
       alert("successfully created");
+      setSuccess(true);
+    })
+    .catch((err) => {
+      setSuccess(false);
     });
 };
 
@@ -55,4 +71,37 @@ export const getFolders = (userId) => (dispatch) => {
 
 export const changeFolder = (folderId) => (dispatch) => {
   dispatch(setChangeFolder(folderId));
+};
+
+//file
+export const getFiles = (userId) => (dispatch) => {
+  fire
+    .firestore()
+    .collection("files")
+    .where("userId", "==", userId)
+    .get()
+    .then(async (files) => {
+      const filesData = await files.docs.map((file) => ({
+        data: file.data(),
+        docId: file.id,
+      }));
+      dispatch(addFiles(filesData));
+    });
+};
+
+export const createFile = (data, setSuccess) => (dispatch) => {
+  fire
+    .firestore()
+    .collection("files")
+    .add(data)
+    .then(async (file) => {
+      const fileData = await (await file.get()).data();
+      const fileId = file.id;
+      dispatch(addFile({ data: fileData, docId: fileId }));
+      alert("successfully created");
+      setSuccess(true);
+    })
+    .catch((error) => {
+      setSuccess(false);
+    });
 };

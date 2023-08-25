@@ -4,7 +4,7 @@ import ShowItems from "../ShowItems/ShowItems";
 
 const FolderComponent = () => {
   const { folderId } = useParams();
-  const { currentFolderData, childFolders } = useSelector(
+  const { currentFolderData, childFolders, childFiles } = useSelector(
     (state) => ({
       currentFolderData: state.filefolders.userFolders.find(
         (folder) => folder.docId === folderId
@@ -12,21 +12,32 @@ const FolderComponent = () => {
       childFolders: state.filefolders.userFolders.filter(
         (folder) => folder.data.parent === folderId
       ),
+      childFiles: state.filefolders.userFiles.filter(
+        (file) => file.data.parent === folderId
+      ),
     }),
     shallowEqual
   );
 
   return (
     <div>
-      {/* FolderComponent: {folderId} {JSON.stringify(currentFolderData)} */}
       {childFolders.length > 0 ? (
         <>
-        <ShowItems
-          type={"folder"}
-          title="Create Folders"
-          items={childFolders}
-        />
-      </>
+          {childFolders.length > 0 && (
+            <ShowItems
+              type={"folder"}
+              title="Created Folders"
+              items={childFolders}
+            />
+          )}
+          {childFiles.length > 0 && (
+            <ShowItems
+              type={"file"}
+              title="Created Files"
+              items={childFiles.filter((file) => file.url == null)}
+            />
+          )}
+        </>
       ) : (
         <p className="text-center my-5 ">Empty Folder</p>
       )}

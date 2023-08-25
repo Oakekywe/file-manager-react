@@ -4,13 +4,14 @@ import { Route, Routes, useNavigate } from "react-router-dom";
 import Navbar from "../../components/DashboardComponents/Navbar/Navbar";
 import SubBar from "../../components/DashboardComponents/SubBar/SubBar";
 import HomeComponent from "../../components/DashboardComponents/HomeComponent/HomeComponent";
-import { fas } from "@fortawesome/free-solid-svg-icons";
 import CreateFolder from "../../components/DashboardComponents/CreateFolder/CreateFolder";
-import { getFolders } from "../../redux/actionCreators/fileFolderActionCreator";
+import { getFiles, getFolders } from "../../redux/actionCreators/fileFolderActionCreator";
 import FolderComponent from "../../components/DashboardComponents/FolderComponent/FolderComponent";
+import CreateFile from "../../components/DashboardComponents/CreateFile/CreateFile";
 
 const DashboardPage = () => {
   const [isCreateFolderModalOpen, setIsCreateFolderModalOpen] = useState(false);
+  const [isCreateFileModalOpen, setIsCreateFileModalOpen] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -32,6 +33,7 @@ const DashboardPage = () => {
   useEffect(() => {
     if (isLoading && userId) {
       dispatch(getFolders(userId));
+      dispatch(getFiles(userId));
     }
   }, [isLoading, userId, dispatch]);
 
@@ -40,8 +42,14 @@ const DashboardPage = () => {
       {isCreateFolderModalOpen && (
         <CreateFolder setIsCreateFolderModalOpen={setIsCreateFolderModalOpen} />
       )}
+      {isCreateFileModalOpen && (
+        <CreateFile setIsCreateFileModalOpen={setIsCreateFileModalOpen} />
+      )}
       <Navbar />
-      <SubBar setIsCreateFolderModalOpen={setIsCreateFolderModalOpen} />
+      <SubBar
+        setIsCreateFolderModalOpen={setIsCreateFolderModalOpen}
+        setIsCreateFileModalOpen={setIsCreateFileModalOpen}
+      />
       <Routes>
         <Route path="" element={<HomeComponent />} />
         <Route path="folder/:folderId" element={<FolderComponent />} />

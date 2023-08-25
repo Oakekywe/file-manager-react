@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "./ShowItems.css";
-import { faFile, faFolder } from "@fortawesome/free-solid-svg-icons";
+import { faFileAlt, faFolder } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { changeFolder } from "../../../redux/actionCreators/fileFolderActionCreator";
@@ -33,7 +33,7 @@ const ShowItems = ({ title, items, type }) => {
                 {type === "folder" ? (
                   <FontAwesomeIcon size="4x" className="mb-3" icon={faFolder} />
                 ) : (
-                  <FontAwesomeIcon size="4x" className="mb-3" icon={faFile} />
+                  <FontAwesomeIcon size="4x" className="mb-3" icon={faFileAlt} />
                 )}
                 {item.data && item.data.name ? item.data.name : "New File"}
               </p>
