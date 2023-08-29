@@ -115,14 +115,48 @@ export const updateFileData = (fileId, data) => (dispatch) => {
   fire
     .firestore()
     .collection("files")
-    .doc(fileId) 
-    .update({data})
+    .doc(fileId)
+    .update({ data })
     .then(() => {
       dispatch(setFileData({ fileId, data }));
       alert("file successfully saved");
-
     })
     .catch(() => {
       alert("error");
     });
+};
+
+export const uploadFile = (file, data, setSuccess) => (dispatch) => {
+  const uploadFileRef = fire.storage().ref(`files/${data.userId}/${data.name}`);
+  uploadFileRef.put(file).on(
+    "state_changed",
+    (snapshot) => {
+      const progress = Math.round(
+        (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+      );
+      console.log("uploading" + progress + "%");
+    },
+    (error) => {
+      console.log(error);
+    },
+    async () => {
+      const fileUrl = await uploadFileRef.getDownloadURL();
+      const fullFile = { ...data, url: fileUrl };
+
+      fire
+        .firestore()
+        .collection("files")
+        .add(fullFile)
+        .then(async (file) => {
+          const fileData = await (await file.get()).data();
+          const fileId = file.id;
+          dispatch(addFile({ data: fileData, docId: fileId }));
+          alert("successfully uploaded");
+          setSuccess(true);
+        })
+        .catch((error) => {
+          setSuccess(false);
+        });
+    }
+  );
 };

@@ -2,10 +2,10 @@ import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
-import { createFile } from "../../../redux/actionCreators/fileFolderActionCreator";
+import { uploadFile } from "../../../redux/actionCreators/fileFolderActionCreator";
 
-const CreateFile = ({ setIsCreateFileModalOpen }) => {
-  const [fileName, setFileName] = useState("");
+const UploadFile = ({ setIsFileUploadModalOpen }) => {
+  const [file, setFile] = useState("");
   const [success, setSuccess] = useState(false);
 
   const { userFiles, user, currentFolder, currentFolderData } = useSelector(
@@ -21,10 +21,7 @@ const CreateFile = ({ setIsCreateFileModalOpen }) => {
   );
   const dispatch = useDispatch();
 
-  const checkFileAlreadyPresent = (name, extension) => {
-    if (!extension) {
-      name = name + ".txt";
-    }
+  const checkFileAlreadyPresent = (name) => {
     const filePresent = userFiles
       .filter((file) => file.data.parent === currentFolder)
       .find((file) => file.data.name === name);
@@ -37,47 +34,39 @@ const CreateFile = ({ setIsCreateFileModalOpen }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (fileName) {
-      if (fileName.length >= 3) {
-        let extension = false;
-        if (fileName.split(".").length > 1) {
-          extension = true;
-        }
-        if (!checkFileAlreadyPresent(fileName, extension)) {
-          const data = {
-            createAt: new Date(),
-            name: extension ? fileName : `${fileName}.txt`,
-            userId: user.uid,
-            createdBy: user.displayName,
-            path:
-              currentFolder === "root"
-                ? []
-                : [...currentFolderData.path, currentFolder],
-            parent: currentFolder,
-            lastAccessed: null,
-            updatedAt: new Date(),
-            extension: extension ? fileName.split(".")[1] : "txt",
-            data: "",
-            url: null,
-          };
+    if (file) {
+      if (!checkFileAlreadyPresent(file)) {
+        const data = {
+          createAt: new Date(),
+          name: file.name,
+          userId: user.uid,
+          createdBy: user.displayName,
+          path:
+            currentFolder === "root"
+              ? []
+              : [...currentFolderData.path, currentFolder],
+          parent: currentFolder,
+          lastAccessed: null,
+          updatedAt: new Date(),
+          extension: file.name.split(".")[1],
+          data: null,
+          url: "",
+        };
 
-          dispatch(createFile(data, setSuccess));
-        } else {
-          alert("File name already have!");
-        }
+        dispatch(uploadFile(file, data, setSuccess));
       } else {
-        alert("File name must be atleast 3 chars");
+        alert("File name already have!");
       }
     } else {
-      alert("Please fill the name");
+      alert("Please upload a file");
     }
   };
 
   useEffect(() => {
     if (success) {
-      setFileName("");
+      setFile("");
       setSuccess(false);
-      setIsCreateFileModalOpen(false);
+      setIsFileUploadModalOpen(false);
     }
   }, [success]);
 
@@ -89,11 +78,11 @@ const CreateFile = ({ setIsCreateFileModalOpen }) => {
       <div className="row align-items-center justify-content-center">
         <div className="col-md-4 mt-5 bg-white rounded p-4">
           <div className="d-flex justify-content-between">
-            <h4>Create File</h4>
+            <h4>Upload File</h4>
             <button
               className="btn"
               onClick={() => {
-                setIsCreateFileModalOpen(false);
+                setIsFileUploadModalOpen(false);
               }}
             >
               <FontAwesomeIcon
@@ -108,13 +97,11 @@ const CreateFile = ({ setIsCreateFileModalOpen }) => {
             <form className="mt-3 w-100" onSubmit={handleSubmit}>
               <div className="form-group">
                 <input
-                  type="text"
+                  type="file"
                   className="form-control"
-                  id="fileName"
-                  value={fileName}
-                  placeholder="File Name (eg., index.txt, index.php , etc...)"
+                  id="file"
                   onChange={(e) => {
-                    setFileName(e.target.value);
+                    setFile(e.target.files[0]);
                   }}
                 />
               </div>
@@ -122,7 +109,7 @@ const CreateFile = ({ setIsCreateFileModalOpen }) => {
                 type="submit"
                 className="btn btn-primary mt-5 form-control"
               >
-                Create File
+                Upload File
               </button>
             </form>
           </div>
@@ -132,4 +119,4 @@ const CreateFile = ({ setIsCreateFileModalOpen }) => {
   );
 };
 
-export default CreateFile;
+export default UploadFile;

@@ -30,7 +30,12 @@ const HomeComponent = () => {
           <ShowItems
             type={"file"}
             title="Created Files"
-            items={userFiles.filter((file) => file.url == null)}
+            items={userFiles.filter((file) => file.data.url == null)}
+          />
+          <ShowItems
+            type={"file"}
+            title="Uploaded Files"
+            items={userFiles.filter((file) => file.data.data == null)}
           />
         </>
       )}
