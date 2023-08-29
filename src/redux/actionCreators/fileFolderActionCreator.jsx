@@ -1,5 +1,6 @@
 import fire from "../../config/firebase";
 import * as types from "../actionsTypes/fileFolderActionTypes";
+import { toast } from "react-toastify"
 
 //folder
 const addFolder = (payload) => ({
@@ -49,7 +50,7 @@ export const createFolder = (data, setSuccess) => (dispatch) => {
       const folderData = await (await folder.get()).data();
       const folderId = folder.id;
       dispatch(addFolder({ data: folderData, docId: folderId }));
-      alert("successfully created");
+      toast.success("successfully created");
       setSuccess(true);
     })
     .catch((err) => {
@@ -103,7 +104,7 @@ export const createFile = (data, setSuccess) => (dispatch) => {
       const fileData = await (await file.get()).data();
       const fileId = file.id;
       dispatch(addFile({ data: fileData, docId: fileId }));
-      alert("successfully created");
+      toast.success("successfully created");
       setSuccess(true);
     })
     .catch((error) => {
@@ -119,10 +120,10 @@ export const updateFileData = (fileId, data) => (dispatch) => {
     .update({ data })
     .then(() => {
       dispatch(setFileData({ fileId, data }));
-      alert("file successfully saved");
+      toast.success("file successfully saved");
     })
     .catch(() => {
-      alert("error");
+      toast.error("error");
     });
 };
 
@@ -151,7 +152,7 @@ export const uploadFile = (file, data, setSuccess) => (dispatch) => {
           const fileData = await (await file.get()).data();
           const fileId = file.id;
           dispatch(addFile({ data: fileData, docId: fileId }));
-          alert("successfully uploaded");
+          toast.success("successfully uploaded");
           setSuccess(true);
         })
         .catch((error) => {

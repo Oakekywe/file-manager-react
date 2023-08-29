@@ -4,6 +4,8 @@ import { Login, Register, HomePage, DashboardPage } from "./pages";
 import { useDispatch } from "react-redux";
 import { useEffect } from "react";
 import { checkIsLoggedIn } from "./redux/actionCreators/authActionCreator";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -14,6 +16,7 @@ const App = () => {
 
   return (
     <div className="App">
+      <ToastContainer />
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<Login />} />
